@@ -12,11 +12,6 @@ Mat img1_warp;
 void perspective();
 int n ;
 
-
-int resolution (int x){
-    return (x*3)/3;
-}
-
 void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 {
     imshow("My Window", display);
@@ -34,16 +29,16 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 void perspective(){
 
     // Four corners in destination image.
-    corners2.push_back(Point2f(resolution(472),resolution(52)));
-    corners2.push_back(Point2f(resolution(472),resolution(830)));
-    corners2.push_back(Point2f(resolution(800),resolution(830)));
-    corners2.push_back(Point2f(resolution(800),resolution(52)));
+    corners2.push_back(Point2f(472,52));
+    corners2.push_back(Point2f(472,830));
+    corners2.push_back(Point2f(800,830));
+    corners2.push_back(Point2f(800,52));
 
     // Calculate Homography
     Mat H = findHomography(corners1, corners2);
 
     // Warp source image to destination based on homography
-    warpPerspective(gray_image, img1_warp, H, {resolution(1280),resolution(875)});
+    warpPerspective(gray_image, img1_warp, H, {1280,875});
 	cout<<"Size of the source image is "<<im_src.size()<<"\n";
 
     // Display images
@@ -56,12 +51,7 @@ void perspective(){
 int main( int argc, char** argv)
 {
     // Read source image.
-    im_src = imread("empty1.jpg");
-
-    //if(im_src.size == 0){
-    //    cout<<"Unable to open the file";
-    //    return -1;
-    //}
+    im_src = imread("empty.jpg");
 	cvtColor( im_src, gray_image, COLOR_BGR2GRAY );
 	display = gray_image.clone();
     // Four corners of the book in source image
@@ -78,7 +68,7 @@ int main( int argc, char** argv)
         cout<<"You did not enter four points\n";
         return 0;
     }
-    Mat cropedImage = img1_warp(Rect(resolution(472),resolution(52),resolution(329),resolution(779)));
+    Mat cropedImage = img1_warp(Rect(472,52,329,779));
     namedWindow("Cropped Image",0);
 	imshow("Cropped Image", cropedImage);
     imwrite("Cropped Image.jpg",cropedImage);
