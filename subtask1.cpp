@@ -64,7 +64,7 @@ int main( int argc, char** argv)
 	display = gray_image.clone();
     // Four corners of the book in source image
 	//Create a window
-    namedWindow("My Window",1); 
+    namedWindow("My Window",0); 
      cout<<"Please select four points on the image : \n";
      //set the callback function for any mouse event
     setMouseCallback("My Window", CallBackFunc, NULL);
