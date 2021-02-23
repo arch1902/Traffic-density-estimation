@@ -1,5 +1,7 @@
 #include "opencv2/opencv.hpp" 
 #include<string>
+#include<algorithm>
+
 
 using namespace cv;
 using namespace std;
@@ -12,6 +14,14 @@ Mat img1_warp;
 void perspective();
 int n ;
 
+bool compx( Point2f a, Point2f b ){
+        return a.x < b.x;
+}
+bool compy( Point2f a, Point2f b ){
+        return a.y < b.y;
+}
+
+
 void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 {
     
@@ -22,7 +32,16 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
                 putText(display,to_display,Point2f(x,y),FONT_HERSHEY_SIMPLEX,1, (0,255,0),3);
                 imshow("My Window", display);
 				cout<<x<<" "<<y<<endl;
-        if (n==4){perspective();}
+        if (n==4){
+            sort(corners1.begin(),corners1.end(),compx);
+            sort(corners1.begin(),corners1.begin()+2,compy);
+            sort(corners1.begin()+2,corners1.end(),compy);
+            reverse(corners1.begin()+2,corners1.end());
+            for(int i = 0;i<4;i++){
+                cout<<corners1[i].x<<" "<<corners1[i].y<<endl;
+            }
+            perspective();
+            }
 	 }
 }
 
@@ -51,7 +70,7 @@ void perspective(){
 int main( int argc, char** argv)
 {
     // Read source image.
-    im_src = imread("empty.jpg");
+    im_src = imread(argv[1]);
 	cvtColor( im_src, gray_image, COLOR_BGR2GRAY );
 	display = gray_image.clone();
     // Four corners of the book in source image

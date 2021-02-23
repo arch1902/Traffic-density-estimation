@@ -1,0 +1,356 @@
+make all -f /home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation/makefile --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 4.1
+ 
+# Built for x86_64-pc-linux-gnu
+# Copyright (C) 1988-2014 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Tue Feb 23 20:24:49 2021
+
+# Variables
+
+# 'override' directive
+GNUMAKEFLAGS := 
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+DESKTOP_SESSION = ubuntu
+# default
+.SHELLFLAGS := -c
+# environment
+CRASH_REPORTER_START_OPTIONS = {"companyName":"Microsoft","productName":"VSCode","submitURL":"appcenter://code?aid=fba07a4d-84bd-4fc8-a125-9640fc8ce171&uid=6c63c0e8-189a-45db-91d4-8acf8db90f5e&iid=6c63c0e8-189a-45db-91d4-8acf8db90f5e&sid=6c63c0e8-189a-45db-91d4-8acf8db90f5e","uploadToServer":true}
+# environment
+XDG_SESSION_TYPE = x11
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+IM_CONFIG_PHASE = 2
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# environment
+GDMSESSION = ubuntu
+# environment
+XMODIFIERS = @im=ibus
+# makefile
+CURDIR := /home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/share/code/code
+# environment
+XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
+# makefile (from '/home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation/makefile', line 1)
+MAKEFILE_LIST :=  /home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation/makefile
+# automatic
+@F = $(notdir $@)
+# environment
+GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
+# environment
+USERNAME = aygupt
+# environment
+MANDATORY_PATH = /usr/share/gconf/ubuntu.mandatory.path
+# environment
+XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# environment
+CLUTTER_IM_MODULE = xim
+# environment
+LESSOPEN = | /usr/bin/lesspipe %s
+# default
+MAKE_HOST := x86_64-pc-linux-gnu
+# environment
+PATH = /home/aygupt/.local/bin:/home/aygupt/bin:/home/aygupt/.local/bin:/home/aygupt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# environment
+GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
+# environment
+SESSION_MANAGER = local/aman:@/tmp/.ICE-unix/6376,unix/aman:/tmp/.ICE-unix/6376
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+TEXTDOMAIN = im-config
+# environment
+XDG_MENU_PREFIX = gnome-
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# environment
+LS_COLORS = 
+# environment
+XDG_SESSION_DESKTOP = ubuntu
+# environment
+SSH_AUTH_SOCK = /tmp/ssh-AwDAYsm4LjVw/agent.6376
+# environment
+GIO_LAUNCHED_DESKTOP_FILE_PID = 30798
+# automatic
+%F = $(notdir $%)
+# environment
+DISPLAY = :0
+# environment
+GTK_IM_MODULE = ibus
+# environment
+PWD = /home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation
+# environment
+XDG_SEAT = seat0
+# environment
+SSH_AGENT_PID = 6612
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
+# environment
+GTK_MODULES = gail:atk-bridge
+# environment
+HOME = /home/aygupt
+# environment
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# environment
+LOGNAME = aygupt
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+MAKE_VERSION := 4.1
+# environment
+GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XDG_VTNR = 2
+# environment
+MAKELEVEL := 0
+# environment
+VERBOSE_LOGGING = true
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+QT_IM_MODULE = ibus
+# environment
+SHLVL = 1
+# environment
+GNOME_SHELL_SESSION_MODE = ubuntu
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-848388fe-4958-453b-b29b-351c867c4001.sock
+# environment
+XDG_SESSION_ID = 3
+# environment
+AMD_ENTRYPOINT = vs/workbench/services/extensions/node/extensionHostProcess
+# environment
+USER = aygupt
+# makefile
+.DEFAULT_GOAL := CFLAGS
+# environment
+XDG_CURRENT_DESKTOP = Unity
+# environment
+PIPE_LOGGING = true
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := make
+# environment
+VSCODE_NODE_CACHED_DATA_DIR = /home/aygupt/.config/Code/CachedData/ea3859d4ba2f3e577a159bc91e3074c5d85c0523
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+LANGUAGE = en_IN:en
+# environment
+VSCODE_IPC_HOOK = /run/user/1000/vscode-4b3a93e8-1.52.1-main.sock
+# makefile
+MAKEFLAGS = pqrR
+# environment
+MFLAGS = -pqrR
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+BREAKPAD_DUMP_LOCATION = /home/aygupt/.config/Code/exthost Crash Reports
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+S_COLORS = auto
+# environment
+QT_ACCESSIBILITY = 1
+# environment
+DEFAULTS_PATH = /usr/share/gconf/ubuntu.default.path
+# environment
+TEXTDOMAINDIR = /usr/share/locale/
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+QT4_IM_MODULE = xim
+# environment
+GJS_DEBUG_TOPICS = JS ERROR;JS LOG
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# environment
+CHROME_DESKTOP = code-url-handler.desktop
+# environment
+WINDOWPATH = 2
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+GJS_DEBUG_OUTPUT = stderr
+# default
+.RECIPEPREFIX := 
+ 
+# environment
+LANG = en_IN
+# environment
+VSCODE_PID = 30798
+ 
+# variable set hash-table stats:
+# Load=102/1024=10%, Rehash=0, Collisions=16/132=12%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+
+# No files, no impossibilities in 0 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+g++:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+CFLAGS: -g -Wall -pthread -std=c++11
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+all: com.cpp
+#  Command line target.
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := all
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := com.cpp
+# automatic
+# | := 
+# automatic
+# < := com.cpp
+# automatic
+# ^ := com.cpp
+# automatic
+# ? := com.cpp
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/13=8%
+#  recipe to execute (from '/home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation/makefile', line 5):
+	$(CC) $(CFLAGS) com.cpp -o com `pkg-config --cflags --libs opencv4`
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+/home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation/makefile:
+#  Implicit rule search has been done.
+#  Last modified 2021-02-23 20:17:22.079257834
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+-pthread:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+CC: g++
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+-std=c++11:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+com.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-02-23 20:00:21.147753627
+#  File has been updated.
+#  Successfully updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from '/home/aygupt/Desktop/Sem4/COP290/Traffic-density-estimation/makefile', line 7):
+	$(RM) com
+
+# Not a target:
+-g:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+-Wall:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=13/1024=1%, Rehash=0, Collisions=0/31=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 15 / storage = 181 B / avg = 12 B
+ 
+# current buf: size = 8162 B / used = 181 B / count = 15 / avg = 12 B
+
+# strcache performance: lookups = 24 / hit rate = 37%
+# hash-table stats:
+# Load=15/8192=0%, Rehash=0, Collisions=0/24=0%
+# Finished Make data base on Tue Feb 23 20:24:49 2021
+
+ 
