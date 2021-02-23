@@ -14,7 +14,7 @@ int n ;
 
 void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 {
-    imshow("My Window", display);
+    
      if  ( n<4 && (event == EVENT_LBUTTONDOWN || event == EVENT_RBUTTONDOWN || event == EVENT_MBUTTONDOWN) ) {
 	 			corners1.push_back(Point2f(x, y));
                 n+=1;
@@ -62,6 +62,7 @@ int main( int argc, char** argv)
     setMouseCallback("My Window", CallBackFunc, NULL);
 
      //show the image
+	imshow("My Window", display);
     // Wait until user press some key
 	waitKey(0);
     if (n!=4){
