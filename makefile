@@ -1,0 +1,27 @@
+# Define compiler
+CC = g++
+
+ # compiler flags:
+ CFLAGS = -g -Wall
+
+# Cpp flags
+CONFIG = `pkg-config --cflags --libs opencv4`
+CPPFLAGS = -pthread -std=c++11
+
+# Executable file
+TARGET = com
+
+all: $(TARGET).cpp
+	@echo "Building all files ....."
+	$(CC) $(TARGET).cpp -o $(TARGET).o $(CFLAGS) $(CPPFLAGS) $(CONFIG)
+	@echo "Your code has been compiled Successfully!!."
+	@echo "Run './com.o <Image Name>' to start the program"
+clean:
+	@echo "Cleaning all files"
+	$(RM) $(TARGET).o 
+
+help: 
+	@echo "This is a documentation of make file"
+	@echo  "'make'/'make all' is used to build the executable file"
+	@echo "'make clean' is used to remove the compiled file"
+	@echo "'make help' is used to call this documentation"
