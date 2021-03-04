@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         if (frame.empty())
             break;
         //update the background model
-        pBackSub->apply(frame, fgMask);
+        pBackSub->apply(frame, fgMask,1);
         //get the frame number and write it on the current frame
         rectangle(frame, cv::Point(10, 2), cv::Point(100,20),
                   cv::Scalar(255,255,255), -1);

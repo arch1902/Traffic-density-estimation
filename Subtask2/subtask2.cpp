@@ -1,6 +1,8 @@
 #include "opencv2/opencv.hpp" 
+#include <opencv2/plot.hpp>
 #include<string>
 #include<algorithm>
+#include<iostream>
 
 using namespace cv;
 using namespace std;
@@ -60,28 +62,37 @@ Mat crop(Mat im_src){
 
 
 
-int main( int argc, char** argv)
+int main()
 {
-    VideoCapture cap("trafficvideo.mp4");
     
     Mat bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
     imshow("imgFrame3", bg);
+
+    GaussianBlur(bg,bg,Size(21,21), 0);
+
+    VideoCapture cap("trafficvideo.mp4");
 
     if(!cap.isOpened()){
         cout << "Error in opening video file" << endl;
         return -1;
     }
 
-
+    double time=0;
+    vector<int> x_axis;
+    vector<double> y_axis;
+    int frame_num=0;
 
     while(cap.isOpened()){
         cap.read(imgFrame);
+        frame_num+=1;
+        if(frame_num%3!=1) continue;
         if(imgFrame.empty()) break;
         imshow("imgFrame", imgFrame);
         imgFrame = crop(imgFrame);
-        imgFrame = GaussianBlur(imgFrame,Size(21,21), 0)
-
+        imshow("gray", imgFrame);
+        GaussianBlur(imgFrame,imgFrame,Size(21,21), 0);
+        
         // Ptr<BackgroundSubtractor> pBackSub=createBackgroundSubtractorKNN();
         // pBackSub->apply(imgFrame,fgMask);
 
@@ -90,13 +101,56 @@ int main( int argc, char** argv)
 
         absdiff(bg,imgFrame,imgFrame2);
 
-        imshow("imgFrame2", imgFrame2);
-        waitKey(100);
+        Mat thresh,dilated;
+
+        imshow("diff", imgFrame2);
+        threshold( imgFrame2, thresh, 30, 255, 0);
+        dilate(thresh,dilated, 0, Point(-1,-1),2);
+
+
+
+        imshow("dilate", dilated);
+
+        double density = countNonZero(dilated)/256291.0;
+        cout<<frame_num<<","<<density<<","<<time<<endl;
+        x_axis.push_back(time);
+        y_axis.push_back(density);
+
+        waitKey(1);
+
+        time+=0.2;
+
+
+       
+
+
+        
         
     }
+        Mat x(x_axis,true);
+        Mat y(y_axis,true);
+        x.convertTo(x, CV_64F);
+        x.convertTo(x, CV_64F);
+
+        Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
+        Mat plot_result ;
+
+        plot->setShowText(true);
+
+        plot->setInvertOrientation(true);   
+        plot->setShowGrid(false);
+        plot->render(plot_result); 
+
+        imshow("Graph", plot_result);
+        imwrite("plot.jpg",plot_result);
+
+
 
     cap.release();
     destroyAllWindows();
 
 
 }
+
+
+
