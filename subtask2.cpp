@@ -10,6 +10,8 @@
 #include <opencv2/video.hpp>
 #include <opencv2/plot.hpp>
 
+#include <fstream>
+
 
 using namespace cv;
 using namespace std;
@@ -81,12 +83,16 @@ int main( int argc, char** argv)
     cap.read(imgFrame2);
     //prvs = crop(imgFrame2);
     cvtColor( imgFrame2,prvs, COLOR_BGR2GRAY );
+
+
+    ofstream myfile;
+    myfile.open ("test.csv");
     
     while(true){
         cap.read(imgFrame);
 
         frame_num+=1;
-        if(frame_num%3!=1) continue;
+        if(frame_num%5!=1) continue;
         if(imgFrame.empty()) break;
 
         //Mat next = crop(imgFrame);
@@ -98,6 +104,7 @@ int main( int argc, char** argv)
         Mat flow(prvs.size(), CV_32FC2);
 
         calcOpticalFlowFarneback(prvs, ne, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+        prvs = ne;
         //prvs = ne;
         //calcOpticalFlowPyrLK(prvs,prvs,next,flow, status, err, Size(15,15), 2, criteria);
         //prvs = next;
@@ -125,39 +132,40 @@ int main( int argc, char** argv)
 
         //threshold( bgr, thresh, 30, 255, 0);
         //dilate(thresh,dilated, 0, Point(-1,-1),2);
-
+        bgr = crop(bgr);
 
 
         //imshow("dilate", dilated);
-        cvtColor(bgr,dilated,COLOR_BGR2GRAY);
+        //cvtColor(bgr,dilated,COLOR_BGR2GRAY);
 
-        //double density = countNonZero(dilated)/256291.0;
-        //cout<<frame_num<<","<<density<<","<<time<<endl;
-        //x_axis.push_back(time);
-        //y_axis.push_back(density);
+        double density = countNonZero(bgr)/256291.0;
+        myfile<<frame_num<<","<<density<<","<<time<<endl;
+        x_axis.push_back(time);
+        y_axis.push_back(density);
 
         waitKey(100);
 
-        //time+=0.2;
+        time+=0.2;
     }
 
+    myfile.close();
 
 
-    //Mat x(x_axis,true);
-    //Mat y(y_axis,true);
-    //x.convertTo(x, CV_64F);
-    //x.convertTo(x, CV_64F);
+    Mat x(x_axis,true);
+    Mat y(y_axis,true);
+    x.convertTo(x, CV_64F);
+    x.convertTo(x, CV_64F);
 
-    //Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
-    //Mat plot_result ;
+    Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
+    Mat plot_result ;
 
-    //plot->setShowText(true);
+    plot->setShowText(true);
 
-    //plot->setInvertOrientation(true);   
-    //plot->setShowGrid(false);
-    //plot->render(plot_result); 
+    plot->setInvertOrientation(true);   
+    plot->setShowGrid(false);
+    plot->render(plot_result); 
 
-    //imshow("Graph", plot_result);
-    //imwrite("plot.jpg",plot_result);
+    imshow("Graph", plot_result);
+    imwrite("plot.jpg",plot_result);
 
 }

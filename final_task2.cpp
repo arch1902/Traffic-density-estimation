@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -8,38 +7,29 @@
 #include "opencv2/opencv.hpp" 
 #include<string>
 #include<algorithm>
-#include <iostream>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/video.hpp>
 #include <opencv2/plot.hpp>
 #include <fstream>
 
-
 using namespace cv;
 using namespace std;
-
 Mat imgFrame,imgFrame2;
 
 vector<Point2f> corners1, corners2;
-Mat gray_image;
-Mat img1_warp;
 Mat display;
+Mat plot_result ;
 string Image_name;
 void perspective();
 int n ;
 
 bool compx( Point2f a, Point2f b ){
         return a.x < b.x;
-}
+    }
 bool compy( Point2f a, Point2f b ){
         return a.y < b.y;
-}
+    }
 
 
-void perspective(){
+Mat perspective(Mat gray_image ){
 
     corners1.push_back(Point2f(967,205));
     corners1.push_back(Point2f(241,1066));
@@ -54,23 +44,32 @@ void perspective(){
 
     // Calculate Homography
     Mat H = findHomography(corners1, corners2);
-
+    Mat p;
     // Warp source image to destination based on homography
-    warpPerspective(gray_image, img1_warp, H, {1280,875});
-
+    warpPerspective(gray_image, p, H, {1280,875});
+    return p;
 }
 
 //
 
 Mat crop(Mat im_src){
-
+    Mat gray_image;
 	cvtColor( im_src, gray_image, COLOR_BGR2GRAY );
-    perspective();
-
+    Mat img1_warp = perspective(gray_image);
+    //gray_image = im_src;
     Mat croppedImage = img1_warp(Rect(472,52,329,779));
+    GaussianBlur(croppedImage,croppedImage,Size(21,21), 0);
     return croppedImage;
 }
 
+void average(vector<double> p ){
+    int i = p.size() -1;
+    float s = 0;
+    for(int j = 0;j<20;j++){
+        s += p[i-j];
+    }
+    p[i] = s/(float)20;
+}
 
 
 int main()
@@ -83,31 +82,27 @@ int main()
     }
     Mat frame1, prvs;
     capture >> frame1;
-    cvtColor(frame1, prvs, COLOR_BGR2GRAY);
-
-
+    prvs = crop(frame1);
+    int frame = 0 ;
     double time=0;
     vector<int> x_axis;
     vector<double> y_axis;
-    int frame_num=0;
-
 
     ofstream myfile;
-    myfile.open ("test.csv");
-
-
-
-
+    myfile.open ("please.csv");
+    
+    //cvtColor(frame1, prvs, COLOR_BGR2GRAY);
     while(true){
         Mat frame2, next;
         capture >> frame2;
-        frame_num+=1;
-        if(frame_num%3!=1) continue;
-        namedWindow("f",0);
-        imshow("f",frame2);
+        frame +=1;
+        if (frame%3 !=1){continue;}
         if (frame2.empty())
             break;
-        cvtColor(frame2, next, COLOR_BGR2GRAY);
+        //cvtColor(frame2, next, COLOR_BGR2GRAY);
+        next = crop(frame2);
+        namedWindow("d",0);
+        imshow("d",next);
         Mat flow(prvs.size(), CV_32FC2);
         calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
         // visualization
@@ -125,38 +120,45 @@ int main()
         merge(_hsv, 3, hsv);
         hsv.convertTo(hsv8, CV_8U, 255.0);
         cvtColor(hsv8, bgr, COLOR_HSV2BGR);
-
-        bgr = crop(bgr);
+        cvtColor(bgr,bgr,COLOR_BGR2GRAY);
+        Mat thresh,dilated;
+        //adaptiveThreshold(bgr,thresh,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY_INV,11,10);
+        threshold( bgr, thresh,20,255,0);
+        dilate(thresh,dilated,0,Point(-1,-1),2);
 
         namedWindow("frame2",0);
         imshow("frame2", bgr);
 
-        double density = countNonZero(bgr)/256291.0;
-        myfile<<frame_num<<","<<density<<","<<time<<endl;
+        double density = countNonZero(dilated)/256291.0;
+        myfile<<frame<<","<<density<<","<<time<<endl;
         x_axis.push_back(time);
         y_axis.push_back(density);
 
+        //if (y_axis.size()>20){average(y_axis);}
+
+        Mat x(x_axis,true);
+        Mat y(y_axis,true);
+        x.convertTo(x, CV_64F);
+
+        Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
+        
+
+        plot->setShowText(true);
+
+        plot->setInvertOrientation(true);   
+        plot->setShowGrid(false);
+        plot->render(plot_result); 
+
+        imshow("Graph", plot_result);
+
         int keyboard = waitKey(30);
+        if (keyboard == 'q' || keyboard == 27)
+            break;
         prvs = next;
         time += 0.2;
     }
     myfile.close();
 
-
-    Mat x(x_axis,true);
-    Mat y(y_axis,true);
-    x.convertTo(x, CV_64F);
-    x.convertTo(x, CV_64F);
-
-    Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
-    Mat plot_result ;
-
-    plot->setShowText(true);
-
-    plot->setInvertOrientation(true);   
-    plot->setShowGrid(false);
-    plot->render(plot_result); 
-
-    //imshow("Graph", plot_result);
+;
     imwrite("plot.jpg",plot_result);
 }
