@@ -74,6 +74,12 @@ void average(vector<double> p ){
 
 int main()
 {
+    Mat bg = imread("bg.jpg");
+    cvtColor( bg, bg, COLOR_BGR2GRAY );
+    GaussianBlur(bg,bg,Size(21,21), 0);
+
+
+
     VideoCapture capture("trafficvideo.mp4");
     if (!capture.isOpened()){
         //error in opening the video input
@@ -103,6 +109,9 @@ int main()
         next = crop(frame2);
         namedWindow("d",0);
         imshow("d",next);
+
+        // Dynamic Density--------------------------------------------------------
+
         Mat flow(prvs.size(), CV_32FC2);
         calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
         // visualization
@@ -125,14 +134,34 @@ int main()
         //adaptiveThreshold(bgr,thresh,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY_INV,11,10);
         threshold( bgr, thresh,20,255,0);
         dilate(thresh,dilated,0,Point(-1,-1),2);
-
         namedWindow("frame2",0);
-        imshow("frame2", bgr);
+        imshow("frame2", dilated);
 
-        double density = countNonZero(dilated)/256291.0;
-        myfile<<frame<<","<<density<<","<<time<<endl;
+        double Ddensity = 2*countNonZero(dilated)/256291.0;
+
+        // Queue Density-------------------------------------------------------------
+
+        GaussianBlur(next,imgFrame,Size(21,21), 0);
+
+        absdiff(bg,imgFrame,imgFrame2);
+
+        Mat thresh1,dilated1;
+
+        threshold( imgFrame2, thresh1, 30, 255, 0);
+        dilate(thresh1,dilated1, 0, Point(-1,-1),2);
+        imshow("dilate", dilated1);    
+
+        double Qdensity = countNonZero(dilated1)/256291.0;   
+
+        //-----------------------------------------------------------------------------
+
+
+
+        myfile<<frame<<","<<Qdensity<<","<<Ddensity<<","<<time<<endl;
+        cout<<frame<<" , "<<Qdensity<<" , "<<Ddensity<<endl;
+
         x_axis.push_back(time);
-        y_axis.push_back(density);
+        y_axis.push_back(Qdensity);
 
         //if (y_axis.size()>20){average(y_axis);}
 
@@ -141,12 +170,6 @@ int main()
         x.convertTo(x, CV_64F);
 
         Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
-        
-
-        plot->setShowText(true);
-
-        plot->setInvertOrientation(true);   
-        plot->setShowGrid(false);
         plot->render(plot_result); 
 
         imshow("Graph", plot_result);
@@ -159,6 +182,6 @@ int main()
     }
     myfile.close();
 
-;
+
     imwrite("plot.jpg",plot_result);
 }
