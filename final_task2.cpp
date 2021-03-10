@@ -16,7 +16,7 @@ Mat imgFrame,imgFrame2;
 
 vector<Point2f> corners1, corners2;
 Mat display;
-Mat plot_result ;
+Mat plot_result, plot_result2;
 string Image_name;
 void perspective();
 int n ;
@@ -58,21 +58,16 @@ Mat crop(Mat im_src){
     Mat img1_warp = perspective(gray_image);
     //gray_image = im_src;
     Mat croppedImage = img1_warp(Rect(472,52,329,779));
-    GaussianBlur(croppedImage,croppedImage,Size(21,21), 0);
+    // GaussianBlur(croppedImage,croppedImage,Size(21,21), 0);
     return croppedImage;
 }
 
 void average(vector<double> p ){
-    int i = p.size() -1;
-    float s = 0;
-    for(int j = 0;j<20;j++){
-        s += p[i-j];
-    }
-    p[i] = s/(float)20;
+
 }
 
 
-int main()
+int main( int argc, char** argv)
 {
     Mat bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
@@ -80,7 +75,7 @@ int main()
 
 
 
-    VideoCapture capture("trafficvideo.mp4");
+    VideoCapture capture(argv[1]);
     if (!capture.isOpened()){
         //error in opening the video input
         cerr << "Unable to open file!" << endl;
@@ -92,17 +87,26 @@ int main()
     int frame = 0 ;
     double time=0;
     vector<int> x_axis;
-    vector<double> y_axis;
+    vector<double> y_axis_q,y_axis_d;
 
     ofstream myfile;
-    myfile.open ("please.csv");
+    myfile.open ("out.txt");
     
+    Mat prev1 , prev2;
     //cvtColor(frame1, prvs, COLOR_BGR2GRAY);
     while(true){
         Mat frame2, next;
         capture >> frame2;
+        // if(frame%3==0) prev1=frame2;
+        // else if(frame%3==2) prev2 = frame2;
+
         frame +=1;
         if (frame%3 !=1){continue;}
+
+
+        // frame2=(frame2+prev1+prev2)/3;
+
+
         if (frame2.empty())
             break;
         //cvtColor(frame2, next, COLOR_BGR2GRAY);
@@ -132,47 +136,75 @@ int main()
         cvtColor(bgr,bgr,COLOR_BGR2GRAY);
         Mat thresh,dilated;
         //adaptiveThreshold(bgr,thresh,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY_INV,11,10);
-        threshold( bgr, thresh,20,255,0);
-        dilate(thresh,dilated,0,Point(-1,-1),2);
+        threshold( bgr, thresh,10,255,0);
+        dilate(thresh,dilated,0,Point(-1,-1),3);
         namedWindow("frame2",0);
-        imshow("frame2", dilated);
+        // imshow("frame2", dilated);
 
-        double Ddensity = 2*countNonZero(dilated)/256291.0;
+        double Ddensity = countNonZero(dilated)/256291.0;
 
         // Queue Density-------------------------------------------------------------
 
         GaussianBlur(next,imgFrame,Size(21,21), 0);
-
         absdiff(bg,imgFrame,imgFrame2);
 
         Mat thresh1,dilated1;
 
         threshold( imgFrame2, thresh1, 30, 255, 0);
         dilate(thresh1,dilated1, 0, Point(-1,-1),2);
-        imshow("dilate", dilated1);    
+        // imshow("dilate", dilated1);    
 
         double Qdensity = countNonZero(dilated1)/256291.0;   
 
         //-----------------------------------------------------------------------------
 
 
+        x_axis.push_back(time);
+        y_axis_q.push_back(Qdensity);
+        y_axis_d.push_back(Ddensity);
 
-        myfile<<frame<<","<<Qdensity<<","<<Ddensity<<","<<time<<endl;
+
+        // if (y_axis_d.size()>20){average(y_axis_d);}
+        int i = y_axis_d.size() -1;
+        float s = 0;
+        if(y_axis_d.size()>3){
+        for(int j = 0;j<3;j++){
+            s += y_axis_d[i-j];
+        }}
+        
+        Ddensity=s/(float)3;
+
+        myfile<<frame<<","<<time<<","<<Qdensity<<","<<Ddensity<<endl;
         cout<<frame<<" , "<<Qdensity<<" , "<<Ddensity<<endl;
 
-        x_axis.push_back(time);
-        y_axis.push_back(Qdensity);
 
-        //if (y_axis.size()>20){average(y_axis);}
 
         Mat x(x_axis,true);
-        Mat y(y_axis,true);
+        Mat y_q(y_axis_q,true);
+        Mat y_d(y_axis_d,true);
         x.convertTo(x, CV_64F);
 
-        Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y);
+        Ptr<plot::Plot2d> plot = plot::Plot2d::create(x,y_q);
+        plot->setShowText(true);
+        plot->setInvertOrientation(true);   
+        plot->setShowGrid(false);
         plot->render(plot_result); 
+        plot->setMaxX(400);
+        plot->setMaxY(0.8);
+        plot->setPlotLineColor(Scalar(0,0,255));
 
+        Ptr<plot::Plot2d> plot2 = plot::Plot2d::create(x,y_d);
+        plot2->setShowText(true);
+        plot2->setInvertOrientation(true);   
+        plot2->setShowGrid(false);
+        plot2->render(plot_result2);
+        plot2->setMaxX(400);
+        plot2->setMaxY(0.8);
+        plot2->setPlotLineColor(Scalar(0,255,0));
+
+        
         imshow("Graph", plot_result);
+        imshow("Graph2", plot_result2);
 
         int keyboard = waitKey(30);
         if (keyboard == 'q' || keyboard == 27)
@@ -183,5 +215,5 @@ int main()
     myfile.close();
 
 
-    imwrite("plot.jpg",plot_result);
+
 }

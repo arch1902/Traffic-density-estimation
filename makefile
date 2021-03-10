@@ -9,13 +9,13 @@ CONFIG = `pkg-config --cflags --libs opencv4`
 CPPFLAGS = -pthread -std=c++11
 
 # Executable file
-TARGET = com
+TARGET = final_task2
 
 all: $(TARGET).cpp
 	@echo "Building all files ....."
 	$(CC) $(TARGET).cpp -o $(TARGET).o $(CFLAGS) $(CPPFLAGS) $(CONFIG)
 	@echo "Your code has been compiled Successfully!!."
-	@echo "Run './com.o <Image Name>' to start the program"
+	@echo "Run './final_task2.o <Video Name>' to start the program"
 clean:
 	@echo "Cleaning all files"
 	$(RM) $(TARGET).o 
