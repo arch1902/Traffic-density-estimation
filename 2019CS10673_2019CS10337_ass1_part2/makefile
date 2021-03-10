@@ -1,3 +1,10 @@
+## If the user enters a wrong command
+.DEFAULT:
+	@echo "This is a documentation of make file"
+	@echo  "'make'/'make all' is used to build the executable file"
+	@echo "'make clean' is used to remove the compiled file"
+	@echo "'make help' is used to call this documentation"
+
 # Define compiler
 CC = g++
 
