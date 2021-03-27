@@ -16,7 +16,7 @@ CONFIG = `pkg-config --cflags --libs opencv4`
 CPPFLAGS = -lpthread -std=c++11
 
 # Executable file
-TARGET = final_task2
+TARGET = method1
 
 all: $(TARGET).cpp
 	@echo "Building all files ....."
