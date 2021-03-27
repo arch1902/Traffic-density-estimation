@@ -64,7 +64,10 @@ int main( int argc, char** argv)
     bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
     GaussianBlur(bg,bg,Size(21,21), 0);
-
+    int x = stoi(argv[2]);
+    int r = bg.rows/x;
+    int c = bg.cols/x;
+    bg.resize((r,c));
     double time=0;
     vector<double> x_axis;
     vector<double> y_axis_q;
@@ -83,11 +86,8 @@ int main( int argc, char** argv)
         if(frame2.empty()){
             break;
         }
-        int r = frame2.rows;
-        int c = frame2.cols;
-        frame2.resize((r/2,c/2));
         frame2 = crop(frame2);
-
+        frame2.resize((r,c));
         Mat thresh1,dilated1,imgFrame2,imgFrame;
         //Applying Gaussion blur to smoothen the image 
         GaussianBlur(frame2,imgFrame,Size(21,21), 0);
@@ -101,7 +101,7 @@ int main( int argc, char** argv)
         x_axis.push_back(time);
         time += 0.067;
     }
-    
+
     ofstream myfile;
     myfile.open ("out.csv");
     myfile<<"density,time"<<endl;
@@ -109,4 +109,36 @@ int main( int argc, char** argv)
         myfile<<y_axis_q[j]<<","<<x_axis[j]<<endl;
     }
     myfile.close();
+
+    // Error Calc
+
+
+    double error = 0, qd;
+    int i=0;
+    vector<string> row;
+    string temp,line,word;
+
+    fstream a;
+    a.open("baseline.csv",ios::in);
+    if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
+    getline(a, line);
+    while(getline(a, line)){
+        row.clear();
+        stringstream s(line);
+        while (s.good()) {
+            getline(s, word, ',');
+            row.push_back(word);
+            
+        }
+        qd = stod(row[0]);
+        //cout<<qd<<" "<<y_axis_q[i]<<endl;
+        
+        error+= pow(qd-y_axis_q[i++],2);
+
+    }
+    // cout<<i<<endl;
+    // cout<<error<<endl;
+    error = error / (i);
+    cout<<"Mean Squared Error : "<<error<<endl;
+    a.close();
 }
