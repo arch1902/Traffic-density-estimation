@@ -83,15 +83,16 @@ int main( int argc, char** argv)
 
     // Output File
     ofstream myfile;
-    myfile.open ("out_"+to_string(x)+"f.txt");
-    
+    myfile.open ("out_"+to_string(x)+"f.csv");
+
+    myfile<<"time"<<","<<"Qdensity"<<endl;
     while(true){
         Mat frame2, next;
         capture >> frame2;
 
         // Calculating at 15/x Frames per second
         frame +=1;
-        if (frame%x!=1){continue;}
+        if (frame%x!=1 and x!=1){continue;}
 
 
         // frame2=(frame2+prev1+prev2)/3;
@@ -127,7 +128,7 @@ int main( int argc, char** argv)
         // Applying rolling statistics to handle the noise
 
 
-        myfile<<frame<<","<<time<<","<<Qdensity<<endl;
+        myfile<<time<<","<<Qdensity<<endl;
         //cout<<frame<<" , "<<Qdensity<<endl;
 
 
@@ -139,7 +140,7 @@ int main( int argc, char** argv)
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
 
-    myfile<< "Time taken processing every "<<x<<" frame : "<<duration.count()/pow(10,6) << endl;
+    //myfile<< "Time taken processing every "<<x<<" frame : "<<duration.count()/pow(10,6) << endl;
     cout<<"Time taken processing every "<<x<<"th frame : "<<duration.count()/pow(10,6) << endl;
 
     // Error Calc
@@ -151,14 +152,15 @@ int main( int argc, char** argv)
     string temp,line,word;
 
     fstream a;
-    a.open("baseline.csv",ios::in);
+    a.open("baseline_1.csv",ios::in);
     if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
 
     int j=0;
-    
-    while(getline(a, line)){
+    getline(a, line);
+    double prev =0;
+    while(getline(a, line) && i<y_axis_q.size()){
         j++;
-        if(j%x!=1) continue;
+
         row.clear();
         stringstream s(line);
         while (s.good()) {
@@ -166,16 +168,22 @@ int main( int argc, char** argv)
             row.push_back(word);
             
         }
-        
-        qd = stod(row[2]);
+        qd = stod(row[1]);
+        if(j%x!=1 and x!=1) {
+            //cout<<qd<<" "<<prev<<endl;
+            error+= pow(qd-prev,2);
+            continue;
+        }
         //cout<<qd<<" "<<y_axis_q[i]<<endl;
-        
+        prev = y_axis_q[i];
+        //cout<<qd<<" "<<y_axis_q[i]<<endl;
         error+= pow(qd-y_axis_q[i++],2);
+        
 
     }
     // cout<<i<<endl;
     // cout<<error<<endl;
-    error = error / (i);
+    error = error/5737;
     cout<<"Mean Squared Error : "<<error<<endl;
     a.close();
 }

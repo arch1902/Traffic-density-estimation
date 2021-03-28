@@ -103,7 +103,6 @@ int main( int argc, char** argv)
     split_bg.resize(NUM_THREADS);
     split_images.resize(NUM_THREADS);
 
-    auto start = high_resolution_clock::now();
     // Reading Empty BackGround Image //
     bg = imread("bg.jpg");
 
@@ -139,9 +138,9 @@ int main( int argc, char** argv)
     // Output File
     ofstream myfile;
     myfile.open ("out_"+to_string(NUM_THREADS)+".csv");
+    myfile<<"frame,time,Qdensity\n";
 
-
-
+    auto start = high_resolution_clock::now();
        // Initialize and set thread joinable
     while(true){
         Mat frame2, next;
@@ -149,7 +148,7 @@ int main( int argc, char** argv)
 
         // Calculating at 5 Frames per second
         frame +=1;
-        if (frame%3 !=1){continue;}
+        //if (frame%3 !=1){continue;}
 
 
         // frame2=(frame2+prev1+prev2)/3;
@@ -223,7 +222,7 @@ int main( int argc, char** argv)
         x.convertTo(x, CV_64F);
 
         prvs = next;
-        time += 0.2;
+        time += 0.067;
         // if(frame==31) break;
 
     }
@@ -232,7 +231,7 @@ int main( int argc, char** argv)
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     myfile<<endl;
-    myfile<< "Time taken using "<<NUM_THREADS<<"Threads : "<<duration.count()/pow(10,6) << endl;
+    //myfile<< "Time taken using "<<NUM_THREADS<<"Threads : "<<duration.count()/pow(10,6) << endl;
     cout<< "Time taken : "<<duration.count()/pow(10,6) << endl;
     
     myfile.close();
@@ -247,14 +246,13 @@ int main( int argc, char** argv)
 
 
 
-    a.open("baseline.csv",ios::in);
+    a.open("baseline_1.csv",ios::in);
     if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
 
     int j=0;
-    
+    getline(a, line);
     while(getline(a, line)){
         j++;
-        if(j%3!=1) continue;
         row.clear();
         stringstream s(line);
         while (s.good()) {
@@ -263,14 +261,11 @@ int main( int argc, char** argv)
             
         }
         
-        qd = stod(row[2]);
-        //cout<<qd<<" "<<y_axis_q[i]<<endl;
-        
-        
+        qd = stod(row[1]);
         error+= pow(qd-y_axis_q[i++],2);
 
     }
-    error = error / (i);
+    error = error/5736;
     cout<<"Mean Squared Error : "<<error<<endl;
     a.close();
 
