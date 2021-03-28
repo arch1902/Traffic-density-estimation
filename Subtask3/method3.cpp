@@ -103,6 +103,7 @@ int main( int argc, char** argv)
     split_bg.resize(NUM_THREADS);
     split_images.resize(NUM_THREADS);
 
+    auto start = high_resolution_clock::now();
     // Reading Empty BackGround Image //
     bg = imread("bg.jpg");
 
@@ -140,7 +141,7 @@ int main( int argc, char** argv)
     myfile.open ("out_"+to_string(NUM_THREADS)+".csv");
 
 
-    auto start = high_resolution_clock::now();
+
        // Initialize and set thread joinable
     while(true){
         Mat frame2, next;
@@ -148,7 +149,7 @@ int main( int argc, char** argv)
 
         // Calculating at 5 Frames per second
         frame +=1;
-        //if (frame%3 !=1){continue;}
+        if (frame%3 !=1){continue;}
 
 
         // frame2=(frame2+prev1+prev2)/3;
@@ -222,7 +223,7 @@ int main( int argc, char** argv)
         x.convertTo(x, CV_64F);
 
         prvs = next;
-        time += 0.067;
+        time += 0.2;
         // if(frame==31) break;
 
     }
@@ -246,31 +247,31 @@ int main( int argc, char** argv)
 
 
 
-    // a.open("baseline.csv",ios::in);
-    // if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
+    a.open("baseline.csv",ios::in);
+    if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
 
-    // int j=0;
+    int j=0;
     
-    // while(getline(a, line)){
-    //     j++;
-    //     if(j%3!=1) continue;
-    //     row.clear();
-    //     stringstream s(line);
-    //     while (s.good()) {
-    //         getline(s, word, ',');
-    //         row.push_back(word);
+    while(getline(a, line)){
+        j++;
+        if(j%3!=1) continue;
+        row.clear();
+        stringstream s(line);
+        while (s.good()) {
+            getline(s, word, ',');
+            row.push_back(word);
             
-    //     }
+        }
         
-    //     qd = stod(row[2]);
-    //     //cout<<qd<<" "<<y_axis_q[i]<<endl;
+        qd = stod(row[2]);
+        //cout<<qd<<" "<<y_axis_q[i]<<endl;
         
         
-    //     error+= pow(qd-y_axis_q[i++],2);
+        error+= pow(qd-y_axis_q[i++],2);
 
-    // }
-    // error = error / (i);
-    // cout<<"Mean Squared Error : "<<error<<endl;
-    // a.close();
+    }
+    error = error / (i);
+    cout<<"Mean Squared Error : "<<error<<endl;
+    a.close();
 
 }

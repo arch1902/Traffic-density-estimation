@@ -84,7 +84,6 @@ int main( int argc, char** argv)
     // Output File
     ofstream myfile;
     myfile.open ("out_"+to_string(x)+"f.txt");
-
     
     while(true){
         Mat frame2, next;
@@ -156,7 +155,7 @@ int main( int argc, char** argv)
     if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
 
     int j=0;
-    getline(a, line);
+    
     while(getline(a, line)){
         j++;
         if(j%x!=1) continue;
@@ -167,7 +166,8 @@ int main( int argc, char** argv)
             row.push_back(word);
             
         }
-        qd = stod(row[0]);
+        
+        qd = stod(row[2]);
         //cout<<qd<<" "<<y_axis_q[i]<<endl;
         
         error+= pow(qd-y_axis_q[i++],2);
