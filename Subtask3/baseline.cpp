@@ -10,7 +10,10 @@
 #include <opencv2/plot.hpp>
 #include <fstream>
 #include <pthread.h>
+#include <chrono>
+#include <sstream>
 
+using namespace std::chrono;
 using namespace cv;
 using namespace std;
 Mat bg;
@@ -61,6 +64,7 @@ Mat crop(Mat im_src){
 
 int main( int argc, char** argv)
 {
+    auto start = high_resolution_clock::now();
     bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
     GaussianBlur(bg,bg,Size(21,21), 0);
@@ -97,12 +101,15 @@ int main( int argc, char** argv)
         x_axis.push_back(time);
         time += 0.067;
     }
-    
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout<< "Time taken : "<<duration.count()/pow(10,6) << endl;
+
     ofstream myfile;
     myfile.open ("baseline.csv");
-    myfile<<"density,time"<<endl;
+    myfile<<"Frame,Time,Density"<<endl;
     for(int j = 0;j<x_axis.size();j++){
-        myfile<<y_axis_q[j]<<","<<x_axis[j]<<endl;
+        myfile<<j+1<<","<<x_axis[j]<<","<<y_axis_q[j]<<endl;
     }
     myfile.close();
 }

@@ -10,12 +10,14 @@
 #include <opencv2/plot.hpp>
 #include <fstream>
 #include <pthread.h>
+#include <chrono>
+#include <sstream>
 
+using namespace std::chrono;
 using namespace cv;
 using namespace std;
 Mat bg;
 
-vector<Point2f> corners1, corners2;
 void perspective();
 
 struct image_info
@@ -28,7 +30,7 @@ struct image_info
 
 //// ---------------SubTask 1 -------------------////
 Mat perspective(Mat gray_image ){
-
+    vector<Point2f> corners1, corners2;
     corners1.push_back(Point2f(967,205));
     corners1.push_back(Point2f(241,1066));
     corners1.push_back(Point2f(1612,1059));
@@ -63,6 +65,7 @@ Mat crop(Mat im_src){
 void* qdensity(void* src1){
         struct image_info *img= (struct image_info*) src1;
         Mat frame2 = img->frame;
+        frame2 = crop(frame2);
         Mat thresh1,dilated1,imgFrame2,imgFrame;
         //Applying Gaussion blur to smoothen the image 
         GaussianBlur(frame2,imgFrame,Size(21,21), 0);
@@ -78,6 +81,7 @@ void* qdensity(void* src1){
 
 int main( int argc, char** argv)
 {
+    auto start = high_resolution_clock::now();
     bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
     GaussianBlur(bg,bg,Size(21,21), 0);
@@ -96,20 +100,24 @@ int main( int argc, char** argv)
         return 0;
     }
     bool end = true;
+    pthread_attr_t attr;
     while (true)
     {
         Mat frames[num_threads];
         int count = 0;
         for(int i = 0 ;i<num_threads;i++){
             capture>>frames[i];
-            if(!frames[i].empty()){frames[i] = crop(frames[i]);count ++;}
+            if(!frames[i].empty()){
+                //frames[i] = crop(frames[i]);
+                count ++;
+            }
         }
         if(count!=num_threads){end = false;}
         struct image_info args[count];
         pthread_t tids[count];
 	    for (int i = 0; i < count; i++) {
             args[i].frame = frames[i];
-            pthread_attr_t attr;
+
             pthread_attr_init(&attr);
             pthread_create(&tids[i], &attr, qdensity, &args[i]);
 	}
@@ -123,12 +131,40 @@ int main( int argc, char** argv)
 	}
     if(!end){break;}
     }
-    
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout<< "Time taken : "<<duration.count()/pow(10,6) << endl;
     ofstream myfile;
-    myfile.open ("out.csv");
-    myfile<<"density,time"<<endl;
+    myfile.open ("output_method2_"+to_string(num_threads)+".csv");
     for(int j = 0;j<x_axis.size();j++){
-        myfile<<y_axis_q[j]<<","<<x_axis[j]<<endl;
+        myfile<<j+1<<y_axis_q[j]<<","<<x_axis[j]<<endl;
     }
     myfile.close();
+
+    // Error Calc
+    double error = 0, qd;
+    int i=0;
+    vector<string> row;
+    string line,word;
+    fstream a;
+    a.open("baseline.csv",ios::in);
+    if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
+    getline(a, line);
+    while(getline(a, line)){
+        row.clear();
+        stringstream s(line);
+        while (s.good()) {
+            getline(s, word, ',');
+            //cout<<word<<" ";
+            row.push_back(word); 
+        }
+        //cout<<endl;
+        qd = stod(row[2]);
+        error+= pow(qd-y_axis_q[i++],2);
+    }
+    //cout<<i<<endl;
+    // cout<<error<<endl;
+    error = error / (i);
+    cout<<"Mean Squared Error : "<<error<<endl;
+    a.close();
 }

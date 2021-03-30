@@ -124,10 +124,6 @@ int main( int argc, char** argv)
         cerr << "Unable to open file!" << endl;
         return 0;
     }
-    // first image frame for the optical flow
-    Mat frame1, prvs;
-    capture >> frame1;
-    prvs = crop(frame1);
 
     //Ploting variables 
     int frame = 0 ;
@@ -137,8 +133,8 @@ int main( int argc, char** argv)
 
     // Output File
     ofstream myfile;
-    myfile.open ("out_"+to_string(NUM_THREADS)+".csv");
-
+    myfile.open ("output_method3_"+to_string(NUM_THREADS)+".csv");
+    myfile<<"frame,time,Qdensity\n";
 
     auto start = high_resolution_clock::now();
        // Initialize and set thread joinable
@@ -161,7 +157,7 @@ int main( int argc, char** argv)
         imshow("Gray Video",next);
 
 
- 
+        
         for(int i=0;i<NUM_THREADS;i++){
         split_images[i] = next(Rect(i*num_col,0,num_col,num_row));
         
@@ -220,8 +216,6 @@ int main( int argc, char** argv)
         Mat x(x_axis,true);
         Mat y_q(y_axis_q,true);
         x.convertTo(x, CV_64F);
-
-        prvs = next;
         time += 0.067;
         // if(frame==31) break;
 
@@ -231,7 +225,7 @@ int main( int argc, char** argv)
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     myfile<<endl;
-    myfile<< "Time taken using "<<NUM_THREADS<<"Threads : "<<duration.count()/pow(10,6) << endl;
+    //myfile<< "Time taken using "<<NUM_THREADS<<"Threads : "<<duration.count()/pow(10,6) << endl;
     cout<< "Time taken : "<<duration.count()/pow(10,6) << endl;
     
     myfile.close();
@@ -246,31 +240,29 @@ int main( int argc, char** argv)
 
 
 
-    // a.open("baseline.csv",ios::in);
-    // if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
+    a.open("baseline.csv",ios::in);
+    if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
 
-    // int j=0;
-    
-    // while(getline(a, line)){
-    //     j++;
-    //     if(j%3!=1) continue;
-    //     row.clear();
-    //     stringstream s(line);
-    //     while (s.good()) {
-    //         getline(s, word, ',');
-    //         row.push_back(word);
+    int j=0;
+    getline(a, line);
+    while(getline(a, line)){
+        j++;
+        row.clear();
+        stringstream s(line);
+        while (s.good()) {
+            getline(s, word, ',');
+            row.push_back(word);
             
-    //     }
+        }
         
-    //     qd = stod(row[2]);
-    //     //cout<<qd<<" "<<y_axis_q[i]<<endl;
-        
-        
-    //     error+= pow(qd-y_axis_q[i++],2);
+        qd = stod(row[2]);
+        //cout<<qd<<"  "<<y_axis_q[i]<<endl;
+        error+= pow(qd-y_axis_q[i++],2);
 
-    // }
-    // error = error / (i);
-    // cout<<"Mean Squared Error : "<<error<<endl;
-    // a.close();
+
+    }
+    error = error/5736;
+    cout<<"Mean Squared Error : "<<error<<endl;
+    a.close();
 
 }

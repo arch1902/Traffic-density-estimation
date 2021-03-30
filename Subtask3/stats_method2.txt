@@ -1,0 +1,59 @@
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 1
+Time taken : 25.9199
+Mean Squared Error : 8.3544e-14
+./method2.o firsthalf.mp4 1  82.09s user 2.06s system 318% cpu 26.383 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 2
+Time taken : 19.2935
+Mean Squared Error : 0.00061129
+./method2.o firsthalf.mp4 2  79.60s user 2.02s system 420% cpu 19.412 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 3
+Time taken : 19.0786
+Mean Squared Error : 0.00232047
+./method2.o firsthalf.mp4 3  79.03s user 2.09s system 422% cpu 19.194 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 4
+Time taken : 18.9146
+Mean Squared Error : 0.00469835
+./method2.o firsthalf.mp4 4  77.75s user 2.12s system 419% cpu 19.033 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 5
+Time taken : 18.604
+Mean Squared Error : 0.0072252
+./method2.o firsthalf.mp4 5  75.35s user 2.12s system 413% cpu 18.721 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 6
+Time taken : 18.3639
+Mean Squared Error : 0.00965937
+./method2.o firsthalf.mp4 6  75.94s user 2.10s system 422% cpu 18.484 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 7
+Time taken : 18.5611
+Mean Squared Error : 0.0109146
+./method2.o firsthalf.mp4 7  74.34s user 2.10s system 409% cpu 18.680 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 8
+Time taken : 18.305
+Mean Squared Error : 0.0117989
+./method2.o firsthalf.mp4 8  74.57s user 2.06s system 415% cpu 18.423 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 9
+Time taken : 18.2367
+Mean Squared Error : 0.0117216
+./method2.o firsthalf.mp4 9  74.46s user 2.07s system 416% cpu 18.352 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 10
+Time taken : 18.4339
+Mean Squared Error : 0.0129155
+./method2.o firsthalf.mp4 10  75.23s user 2.09s system 416% cpu 18.555 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 15
+Time taken : 18.3499
+Mean Squared Error : 0.0128927
+./method2.o firsthalf.mp4 15  74.32s user 2.09s system 413% cpu 18.464 total
+
+amangupta@Amans-MBP Subtask3 % time ./method2.o firsthalf.mp4 20
+Time taken : 19.2666
+Mean Squared Error : 0.02886
+./method2.o firsthalf.mp4 20  75.96s user 2.47s system 404% cpu 19.383 total

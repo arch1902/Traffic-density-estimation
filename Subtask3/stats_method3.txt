@@ -1,0 +1,119 @@
+Running test number 1
+Time taken : 28.3257
+Mean Squared Error : 2.10369e-05
+3.09
+real    0m28.854s
+user    1m24.791s
+sys     0m4.478s
+
+Running test number 2
+Time taken : 23.9674
+Mean Squared Error : 0.262689
+3.69
+real    0m24.538s
+user    1m25.896s
+sys     0m4.635s
+
+Running test number 3
+Time taken : 22.8092
+Mean Squared Error : 0.000112332
+3.93
+real    0m23.361s
+user    1m26.841s
+sys     0m5.092s
+
+Running test number 4
+Time taken : 22.4611
+Mean Squared Error : 0.382193
+4.08
+real    0m23.058s
+user    1m28.798s
+sys     0m5.249s
+
+Running test number 5
+Time taken : 25.7172
+Mean Squared Error : 9.0422e-05
+3.96
+real    0m26.341s
+user    1m37.665s
+sys     0m6.582s
+
+Running test number 6
+Time taken : 22.6268
+Mean Squared Error : 0.262747
+4.29
+real    0m23.272s
+user    1m33.839s
+sys     0m5.925s
+
+Running test number 7
+Time taken : 22.6077
+Mean Squared Error : 0.262724
+4.477
+real    0m23.192s
+user    1m37.381s
+sys     0m6.455s
+
+Running test number 8
+Time taken : 22.4612
+Mean Squared Error : 0.000281536
+4.51
+real    0m22.988s
+user    1m37.518s
+sys     0m6.115s
+
+Running test number 9
+Time taken : 23.2331
+Mean Squared Error : 0.000266028
+4.34
+real    0m23.804s
+user    1m36.764s
+sys     0m6.660s
+
+Running test number 10
+Time taken : 22.8191
+Mean Squared Error : 0.000449914
+4.39
+real    0m23.368s
+user    1m35.978s
+sys     0m6.677s
+
+Running test number 15
+Time taken : 23.1859
+Mean Squared Error : 9.95983e-05
+4.53
+real    0m23.731s
+user    1m40.094s
+sys     0m7.539s
+
+Running test number 20
+Time taken : 23.4959
+Mean Squared Error : 0.000101685
+4.55
+real    0m24.065s
+user    1m41.021s
+sys     0m8.385s
+
+Running test number 25
+Time taken : 24.4623
+Mean Squared Error : 3.06738e-05
+4.65
+real    0m25.037s
+user    1m47.245s
+sys     0m9.256s
+
+Running test number 30
+Time taken : 24.7333
+Mean Squared Error : 0.000149249
+4.69
+real    0m25.351s
+user    1m49.402s
+sys     0m9.569s
+
+Running test number 35
+Time taken : 24.9715
+Mean Squared Error : 3.78641e-05
+4.73
+real    0m25.584s
+user    1m50.833s
+sys     0m10.254s

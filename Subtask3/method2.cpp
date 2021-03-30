@@ -10,7 +10,10 @@
 #include <opencv2/plot.hpp>
 #include <fstream>
 #include <pthread.h>
+#include <chrono>
+#include <sstream>
 
+using namespace std::chrono;
 using namespace cv;
 using namespace std;
 Mat bg;
@@ -61,13 +64,15 @@ Mat crop(Mat im_src){
 
 int main( int argc, char** argv)
 {
+    auto start = high_resolution_clock::now();
     bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
     GaussianBlur(bg,bg,Size(21,21), 0);
     int x = stoi(argv[2]);
     int r = bg.rows/x;
     int c = bg.cols/x;
-    bg.resize((r,c));
+    Size resolved = Size(c,r);
+    resize(bg,bg,resolved);
     double time=0;
     vector<double> x_axis;
     vector<double> y_axis_q;
@@ -80,6 +85,8 @@ int main( int argc, char** argv)
         return 0;
     }
     Mat frame2;
+    //namedWindow( "Image", 0);
+    //namedWindow("Image2",0);
     while (true)
     {
         capture>>frame2;
@@ -87,7 +94,10 @@ int main( int argc, char** argv)
             break;
         }
         frame2 = crop(frame2);
-        frame2.resize((r,c));
+        //imshow("Image2",frame2);
+        resize(frame2,frame2,resolved);
+        //imshow("Image",frame2);
+        //waitKey(30);
         Mat thresh1,dilated1,imgFrame2,imgFrame;
         //Applying Gaussion blur to smoothen the image 
         GaussianBlur(frame2,imgFrame,Size(21,21), 0);
@@ -102,22 +112,23 @@ int main( int argc, char** argv)
         time += 0.067;
     }
 
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout<< "Time taken : "<<duration.count()/pow(10,6) << endl;
+
     ofstream myfile;
-    myfile.open ("out.csv");
-    myfile<<"density,time"<<endl;
+    myfile.open ("output_method2_"+to_string(x)+".csv");
+    myfile<<"Frame,Time,Density"<<endl;
     for(int j = 0;j<x_axis.size();j++){
-        myfile<<y_axis_q[j]<<","<<x_axis[j]<<endl;
+        myfile<<j+1<<","<<x_axis[j]<<","<<y_axis_q[j]<<endl;
     }
     myfile.close();
 
     // Error Calc
-
-
     double error = 0, qd;
     int i=0;
     vector<string> row;
-    string temp,line,word;
-
+    string line,word;
     fstream a;
     a.open("baseline.csv",ios::in);
     if(!a.is_open()){cout<<"File not found"<<endl;exit(-1);}
@@ -127,16 +138,14 @@ int main( int argc, char** argv)
         stringstream s(line);
         while (s.good()) {
             getline(s, word, ',');
-            row.push_back(word);
-            
+            //cout<<word<<" ";
+            row.push_back(word); 
         }
-        qd = stod(row[0]);
-        //cout<<qd<<" "<<y_axis_q[i]<<endl;
-        
+        //cout<<endl;
+        qd = stod(row[2]);
         error+= pow(qd-y_axis_q[i++],2);
-
     }
-    // cout<<i<<endl;
+    //cout<<i<<endl;
     // cout<<error<<endl;
     error = error / (i);
     cout<<"Mean Squared Error : "<<error<<endl;

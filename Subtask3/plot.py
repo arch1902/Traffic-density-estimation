@@ -5,5 +5,5 @@ import sys
 df=pd.read_csv(sys.argv[1])
 ax = plt.gca()
 #df.plot(kind='line',x='frame',y='dynamic density', color = 'blue' , ax=ax)
-df.plot(kind='line',x='frame',y='queue density', color = 'red' , ax=ax)
+df.plot(kind='line',x='Time',y='Density', color = 'red' , ax=ax)
 plt.show()
