@@ -9,21 +9,13 @@
 #include<algorithm>
 #include <opencv2/plot.hpp>
 #include <fstream>
-#include <pthread.h>
 
 using namespace cv;
 using namespace std;
-Mat bg;
+Mat imgFrame,imgFrame2;
 
 vector<Point2f> corners1, corners2;
 Mat plot_result, plot_result2;
-#define NUM_THREADS 2
-pthread_t threads[NUM_THREADS];
-pthread_attr_t attr;
-void *status;
-int Qdensity;
-int row_size;
-int col_size;
 void perspective();
 
 //// ---------------SubTask 1 -------------------////
@@ -60,25 +52,10 @@ Mat crop(Mat im_src){
 //// ---------------SubTask 1 -------------------////
 
 
-void* qdensity(void* src1){
-        Mat thresh1,dilated1,imgFrame2,imgFrame;
-        Mat src = Mat(row_size, col_size, CV_16U, &src1);
-        //Applying Gaussion blur to smoothen the image 
-        GaussianBlur(src,imgFrame,Size(21,21), 0);
-        // Substracting the two image
-        absdiff(bg,imgFrame,imgFrame2);
-        // To reduce and handle noise in the image
-        threshold( imgFrame2, thresh1, 30, 255, 0);
-        dilate(thresh1,dilated1, 0, Point(-1,-1),2); 
-        double q= countNonZero(dilated1)/(double)dilated1.total();
-        Qdensity+= q;
-        pthread_exit(NULL);
-}
-
 int main( int argc, char** argv)
 {
     // Reading Empty BackGround Image //
-    bg = imread("bg.jpg");
+    Mat bg = imread("bg.jpg");
     cvtColor( bg, bg, COLOR_BGR2GRAY );
     GaussianBlur(bg,bg,Size(21,21), 0);
 
@@ -98,17 +75,16 @@ int main( int argc, char** argv)
     int frame = 0 ;
     double time=0;
     vector<int> x_axis;
-    vector<double> y_axis_q;
+    vector<double> y_axis_q,y_axis_d;
 
     // Output File
     ofstream myfile;
-    myfile.open ("out.txt");
-
-       // Initialize and set thread joinable
+    myfile.open ("dense.csv");
+    myfile<<"frame,time,dynamic density"<<endl;
+    
     while(true){
         Mat frame2, next;
         capture >> frame2;
-
         // Calculating at 5 Frames per second
         frame +=1;
         if (frame%3 !=1){continue;}
@@ -116,67 +92,66 @@ int main( int argc, char** argv)
 
         // frame2=(frame2+prev1+prev2)/3;
 
-
         if (frame2.empty())
             break;
         next = crop(frame2);
         namedWindow("Gray Video",0);
         imshow("Gray Video",next);
 
-        Mat split_images[NUM_THREADS];
-        split(next,split_images);
-        row_size = split_images[0].rows;
-        col_size = split_images[0].cols;
-        // row_size = next.rows;
-        // col_size = next.cols;
-        Qdensity = 0;
+        // Dynamic Density--------------------------------------------------------
 
-        // Queue Density-------------------------------------------------------------
-        int rc,i;
-        pthread_attr_init(&attr);
-        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-        for(i = 0; i < NUM_THREADS; i++ ) {
-            void *pointer;
-            pointer = &split_images[i];
-            cout << "main() : creating thread, " << i << endl;
-            rc = pthread_create(&threads[i], &attr,qdensity, pointer );
-            if (rc) {
-                cout << "Error:unable to create thread," << rc << endl;
-                exit(-1);
-            }
-        }
+        // Optical flow
+        Mat flow(prvs.size(), CV_32FC2);
+        calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+        
+        // Convert the inmage from cartesian to polar coordinates so that the magnitude of the motion 
+        // of individual pixel can be determined 
+        Mat flow_parts[2];
+        split(flow, flow_parts);
+        Mat magnitude, angle, magn_norm;
+        cartToPolar(flow_parts[0], flow_parts[1], magnitude, angle, true);
+        normalize(magnitude, magn_norm, 0.0f, 1.0f, NORM_MINMAX);
+        angle *= ((1.f / 360.f) * (180.f / 255.f));
 
-        // free attribute and wait for the other threads
-        pthread_attr_destroy(&attr);
-        for( i = 0; i < NUM_THREADS; i++ ) {
-            rc = pthread_join(threads[i], &status);
-            if (rc) {
-                cout << "Error:unable to join," << rc << endl;
-                exit(-1);
-            }
-            cout << "Main: completed thread id :" << i ;
-            cout << "  exiting with status :" << status << endl;
-        }
+        // Convert the polar image into hsv image 
+        Mat _hsv[3], hsv, hsv8, bgr;
+        _hsv[0] = angle;
+        _hsv[1] = Mat::ones(angle.size(), CV_32F);
+        _hsv[2] = magn_norm;
+        merge(_hsv, 3, hsv);
+        hsv.convertTo(hsv8, CV_8U, 255.0);
 
-        cout << "Main: program exiting." << endl;
-        pthread_exit(NULL);
+        cvtColor(hsv8, bgr, COLOR_HSV2BGR);
+        cvtColor(bgr,bgr,COLOR_BGR2GRAY);
+        Mat thresh,dilated;
+        //adaptiveThreshold(bgr,thresh,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY_INV,11,10);
+        // To reduce and handle noise in the image 
+        threshold( bgr, thresh,10,255,0);
+        dilate(thresh,dilated,0,Point(-1,-1),3);
 
+        //cout << dilated.total();
+
+        double Ddensity = countNonZero(dilated)/(double)dilated.total();
 
         //-----------------------------------------------------------------------------
 
 
         x_axis.push_back(time);
-        y_axis_q.push_back(Qdensity);
+        y_axis_d.push_back(Ddensity);
 
-        myfile<<frame<<","<<time<<","<<Qdensity<<endl;
+        // Applying rolling statistics to handle the noise
+        int i = y_axis_d.size() -1;
+        float s = 0;
+        if(y_axis_d.size()>3){
+        for(int j = 0;j<3;j++){
+            s += y_axis_d[i-j];
+        }}
+        
+        Ddensity=s/(float)3;
 
-        // Ploting the live curve 
-        Mat x(x_axis,true);
-        Mat y_q(y_axis_q,true);
-        x.convertTo(x, CV_64F);
+        myfile<<frame<<","<<time<<","<<Ddensity<<endl;
+        //cout<<frame<<"  "<<Ddensity<<endl;
 
-        cout<<"Fffffffffff"<<endl;
-        waitKey(30);
         prvs = next;
         time += 0.2;
     }
