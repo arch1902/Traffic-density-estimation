@@ -1,2 +1,2 @@
-# Traffic-density-estimation , Spring'21
+# Traffic Density Estimation , Spring'21
 ## Under Prof. Rijurekha Sen
